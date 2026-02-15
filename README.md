@@ -24,7 +24,7 @@ The app uses [NewsAPI](https://newsapi.org) for articles. You need a free API ke
 - _make sure you have the Expo Go app downloaded on your phone_
 - `npm install`
 - Add your API key to `.env` (see above).
-- `npx expo start` — then scan the QR code with Expo Go, or press `a` / `i` for a simulator.
+- `npx expo start` then scan the QR code with Expo Go, or press `a` / `i` for a simulator.
 
 ## Figma prototype
 
