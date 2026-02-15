@@ -10,7 +10,7 @@ import {
   Image,
 } from 'react-native';
 
-const API_KEY = '304fbb2f913a465097614357d7127e33'; // Replace this with your actual key
+const API_KEY = process.env.EXPO_PUBLIC_NEWS_API_KEY;
 
 export default function NewsScreen() {
   const navigation = useNavigation(); 
@@ -21,6 +21,11 @@ export default function NewsScreen() {
   const fetchNews = async (topic = null) => {
     setLoadingMessage('Loading...');
     setArticles([]);
+
+    if (!API_KEY) {
+      setLoadingMessage('Missing API key. Copy .env.example to .env and add EXPO_PUBLIC_NEWS_API_KEY.');
+      return;
+    }
 
     let url = '';
 
@@ -59,13 +64,16 @@ export default function NewsScreen() {
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Text style={styles.backButtonText}>Back</Text>
         </TouchableOpacity>
-        <View>
-          <View style={styles.titleBlock}>
-            <Text style={styles.title}>TRUTHLENS</Text>
-          </View>
+        <View style={styles.titleBlock}>
+          <Text style={styles.title}>TRUTHLENS</Text>
           <Text style={styles.tagline}>NEWS THAT DEMANDS ATTENTION</Text>
         </View>
-
+        <TouchableOpacity
+          style={styles.favoritesButton}
+          onPress={() => navigation.navigate('Favorites')}
+        >
+          <Text style={styles.favoritesButtonText}>❤️</Text>
+        </TouchableOpacity>
       </View>
 
 
@@ -103,7 +111,11 @@ export default function NewsScreen() {
         data={articles}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
-          <View style={styles.card}>
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => navigation.navigate('ArticleDetail', { article: item })}
+            activeOpacity={0.8}
+          >
             {item.urlToImage && (
               <Image source={{ uri: item.urlToImage }} style={styles.cardImage} />
             )}
@@ -111,7 +123,7 @@ export default function NewsScreen() {
             <Text style={styles.cardSource}>
               {item.source.name} · {new Date(item.publishedAt).toLocaleTimeString()}
             </Text>
-          </View>
+          </TouchableOpacity>
         )}
         contentContainerStyle={styles.list}
       />
@@ -210,7 +222,21 @@ const styles = StyleSheet.create({
   },
 
   titleBlock: {
-    marginLeft: 12, // space between Back button and title
+    flex: 1,
+    marginLeft: 12,
+  },
+
+  favoritesButton: {
+    backgroundColor: '#333',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+  },
+
+  favoritesButtonText: {
+    color: '#fff',
+    fontSize: 13,
+    fontWeight: 'bold',
   },
 
   backButton: {
